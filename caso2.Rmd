@@ -1,0 +1,475 @@
+---
+title: "casos2"
+author: "Santi Pérez"
+date: "2/20/2023"
+output: html_document
+---
+
+
+```{r code librerias}
+library(ISwR)
+library(tidyr)
+library(dplyr)
+library(MASS)
+library(tidyr)
+library(ggplot2)
+library(tidyverse)
+library(dplyr)
+library(MASS)
+library(corrplot)
+library(caret)
+```
+
+```{r code0}
+
+caso2=read.csv("case2.csv")
+caso2_1=caso2 %>% filter(carbon.dioxide.emissions <=100)
+ggplot(caso2, aes(Life.expectancy, particulate.matter.emissions))+geom_jitter()
+ggplot(caso2_1, aes(Life.expectancy, carbon.dioxide.emissions))+geom_jitter()
+ggplot(caso2, aes(Life.expectancy, methane.emissions))+geom_jitter()
+# Here, we can see the deviance column that gives differences between models as variables are added to the model in turn. Since the ab variable is significant, it may be not removed from the model and we cannot use the table to justify model reductions. If, however, the terms are rearranged so that age comes last, we get a deviance-based test for removal of that variable:
+
+```
+
+```{r code10}
+
+caso2=read.csv("case2.csv")
+
+ggplot(caso2, aes(Life.expectancy)) + geom_histogram()
+ggplot(caso2, aes(Life.expectancy, particulate.matter.emissions))+ geom_point()
+ggplot(caso2, aes(Life.expectancy, carbon.dioxide.emissions))+ geom_point()
+ggplot(caso2, aes(Life.expectancy, methane.emissions))+ geom_point()
+
+#Eliminación outliers
+#caso2=filter(caso2, carbon.dioxide.emissions < 100)
+#caso2=filter(caso2, methane.emissions < 20)
+#ggplot(caso2, aes(Life.expectancy, carbon.dioxide.emissions))+ geom_point()
+#ggplot(caso2, aes(Life.expectancy, methane.emissions))+ geom_point()
+
+#Construcción nuevo dataset
+Life.expectancy<-replace(caso2$Life.expectancy, caso2$Life.expectancy<75, 0)
+Life.expectancy<-replace(Life.expectancy, Life.expectancy>=75, 1)
+Country=caso2$Country
+particulate.matter.emissions=caso2$particulate.matter.emissions
+carbon.dioxide.emissions=caso2$carbon.dioxide.emissions
+methane.emissions=caso2$methane.emissions
+caso2<-data.frame(Country,Life.expectancy,particulate.matter.emissions,carbon.dioxide.emissions,methane.emissions)
+
+#Split into train and test
+smp_size <- floor(0.80 * nrow(caso2))
+set.seed(123)
+train_ind <- sample(seq_len(nrow(caso2)), size = smp_size)
+
+train_caso2_binomial <- caso2[train_ind, ]
+test_caso2_binomial <- caso2[-train_ind, ]
+
+# The first part are the deviance residuals, this is the contribution of the cells of the table to the deviance of the model. It shows the median deviance residual, the minimum and the maximum.
+
+# In the second part, which is the most interest table, we get the estimates of the regression coefficients, standard errors of same, and tests for whether each regression coefficient can be assumed to be zero. As we can see, the z test in the table of regression coefficients immediately shows that the model can be simplified by removing age.
+
+# In the third part we have null and residual deviance. Residual deviance corresponds to the residual sum of squares in ordi- nary regression analyses which is used to estimate the standard deviation about the regression line. The null deviance is the deviance of a model that contains only the in- tercept.
+
+```
+
+```{r code Binomial 1}
+#Dataset binomial
+
+caso2=read.csv("case2.csv")
+
+ggplot(caso2, aes(Life.expectancy)) + geom_histogram()
+ggplot(caso2, aes(Life.expectancy, particulate.matter.emissions))+ geom_point()
+ggplot(caso2, aes(Life.expectancy, carbon.dioxide.emissions))+ geom_point()
+ggplot(caso2, aes(Life.expectancy, methane.emissions))+ geom_point()
+
+#Eliminación outliers
+#caso2=filter(caso2, carbon.dioxide.emissions < 100)
+#caso2=filter(caso2, methane.emissions < 20)
+#ggplot(caso2, aes(Life.expectancy, carbon.dioxide.emissions))+ geom_point()
+#ggplot(caso2, aes(Life.expectancy, methane.emissions))+ geom_point()
+
+#Construcción nuevo dataset
+Life.expectancy<-replace(caso2$Life.expectancy, caso2$Life.expectancy<75, 0)
+Life.expectancy<-replace(Life.expectancy, Life.expectancy>=75, 1)
+Country=caso2$Country
+particulate.matter.emissions=caso2$particulate.matter.emissions
+carbon.dioxide.emissions=caso2$carbon.dioxide.emissions
+methane.emissions=caso2$methane.emissions
+caso2_binomial <-data.frame(Country,Life.expectancy,particulate.matter.emissions,carbon.dioxide.emissions,methane.emissions)
+
+#Split into train and test
+smp_size <- floor(0.80 * nrow(caso2_binomial))
+set.seed(123)
+train_ind <- sample(seq_len(nrow(caso2_binomial)), size = smp_size)
+
+train_caso2_binomial <- caso2_binomial[train_ind, ]
+test_caso2_binomial <- caso2_binomial[-train_ind, ]
+
+# The first part are the deviance residuals, this is the contribution of the cells of the table to the deviance of the model. It shows the median deviance residual, the minimum and the maximum.
+
+# In the second part, which is the most interest table, we get the estimates of the regression coefficients, standard errors of same, and tests for whether each regression coefficient can be assumed to be zero. As we can see, the z test in the table of regression coefficients immediately shows that the model can be simplified by removing age.
+
+# In the third part we have null and residual deviance. Residual deviance corresponds to the residual sum of squares in ordi- nary regression analyses which is used to estimate the standard deviation about the regression line. The null deviance is the deviance of a model that contains only the in- tercept.
+
+```
+
+```{r code Poisson}
+# Dataset Poisson
+
+caso2=read.csv("case2.csv")
+
+ggplot(caso2, aes(Life.expectancy)) + geom_histogram()
+ggplot(caso2, aes(Life.expectancy, particulate.matter.emissions))+ geom_point()
+ggplot(caso2, aes(Life.expectancy, carbon.dioxide.emissions))+ geom_point()
+ggplot(caso2, aes(Life.expectancy, methane.emissions))+ geom_point()
+
+#Eliminación outliers
+#caso2=filter(caso2, carbon.dioxide.emissions < 100)
+#caso2=filter(caso2, methane.emissions < 20)
+#ggplot(caso2, aes(Life.expectancy, carbon.dioxide.emissions))+ geom_point()
+#ggplot(caso2, aes(Life.expectancy, methane.emissions))+ geom_point()
+
+#Construcción nuevo dataset
+caso2_poisson <- mutate(caso2, Life.expectancy = case_when(Life.expectancy <= 65 ~ 0,
+                                     Life.expectancy > 65 & Life.expectancy <= 72.5 ~ 1,
+                                     Life.expectancy > 72.5 & Life.expectancy <= 80 ~ 2,
+                                     Life.expectancy > 80 ~ 3))
+
+#Split into train and test
+smp_size <- floor(0.80 * nrow(caso2_poisson))
+set.seed(123)
+train_ind <- sample(seq_len(nrow(caso2_poisson)), size = smp_size)
+
+train_caso2_poisson <- caso2_poisson[train_ind, ]
+test_caso2_poisson <- caso2_poisson[-train_ind, ]
+
+# The first part are the deviance residuals, this is the contribution of the cells of the table to the deviance of the model. It shows the median deviance residual, the minimum and the maximum.
+
+# In the second part, which is the most interest table, we get the estimates of the regression coefficients, standard errors of same, and tests for whether each regression coefficient can be assumed to be zero. As we can see, the z test in the table of regression coefficients immediately shows that the model can be simplified by removing age.
+
+# In the third part we have null and residual deviance. Residual deviance corresponds to the residual sum of squares in ordi- nary regression analyses which is used to estimate the standard deviation about the regression line. The null deviance is the deviance of a model that contains only the in- tercept.
+
+```
+
+```{r code Gaussian}
+
+caso2=read.csv("case2.csv")
+
+ggplot(caso2, aes(Life.expectancy)) + geom_histogram()
+ggplot(caso2, aes(Life.expectancy, particulate.matter.emissions))+ geom_point()
+ggplot(caso2, aes(Life.expectancy, carbon.dioxide.emissions))+ geom_point()
+ggplot(caso2, aes(Life.expectancy, methane.emissions))+ geom_point()
+
+#Eliminación outliers
+#caso2=filter(caso2, carbon.dioxide.emissions < 100)
+#caso2=filter(caso2, methane.emissions < 20)
+#ggplot(caso2, aes(Life.expectancy, carbon.dioxide.emissions))+ geom_point()
+#ggplot(caso2, aes(Life.expectancy, methane.emissions))+ geom_point()
+
+#Split into train and test
+smp_size <- floor(0.80 * nrow(caso2))
+set.seed(123)
+train_ind <- sample(seq_len(nrow(caso2)), size = smp_size)
+
+train_caso2_gaussian <- caso2[train_ind, ]
+test_caso2_gaussian <- caso2[-train_ind, ]
+
+# The first part are the deviance residuals, this is the contribution of the cells of the table to the deviance of the model. It shows the median deviance residual, the minimum and the maximum.
+
+# In the second part, which is the most interest table, we get the estimates of the regression coefficients, standard errors of same, and tests for whether each regression coefficient can be assumed to be zero. As we can see, the z test in the table of regression coefficients immediately shows that the model can be simplified by removing age.
+
+# In the third part we have null and residual deviance. Residual deviance corresponds to the residual sum of squares in ordi- nary regression analyses which is used to estimate the standard deviation about the regression line. The null deviance is the deviance of a model that contains only the in- tercept.
+
+```
+
+```{r code Matrices Correlación}
+#Binomial
+caso2_corr_binomial=caso2_binomial[,2:5]
+corrplot(cor(caso2_corr_binomial),        # Matriz de correlación
+         method = "shade", # Método para el gráfico de correlación
+         type = "full",    # Estilo del gráfico (también "upper" y "lower")
+         diag = TRUE,      # Si TRUE (por defecto), añade la diagonal
+         tl.col = "black", # Color de las etiquetas
+         bg = "white",     # Color de fondo
+         title = "",       # Título
+         col = NULL)       # Paleta de colores
+#Poisson
+caso2_corr_poisson=caso2_poisson[,3:6]
+corrplot(cor(caso2_corr_poisson),        # Matriz de correlación
+         method = "shade", # Método para el gráfico de correlación
+         type = "full",    # Estilo del gráfico (también "upper" y "lower")
+         diag = TRUE,      # Si TRUE (por defecto), añade la diagonal
+         tl.col = "black", # Color de las etiquetas
+         bg = "white",     # Color de fondo
+         title = "",       # Título
+         col = NULL)       # Paleta de colores
+#Multiple
+caso2_corr=caso2[,3:6]
+corrplot(cor(caso2_corr),        # Matriz de correlación
+         method = "shade", # Método para el gráfico de correlación
+         type = "full",    # Estilo del gráfico (también "upper" y "lower")
+         diag = TRUE,      # Si TRUE (por defecto), añade la diagonal
+         tl.col = "black", # Color de las etiquetas
+         bg = "white",     # Color de fondo
+         title = "",       # Título
+         col = NULL)       # Paleta de colores
+
+```
+
+```{r code GLM Binomial}
+
+glm.caso2_binomial=glm(Life.expectancy~particulate.matter.emissions+carbon.dioxide.emissions+methane.emissions, family= "binomial", data = train_caso2_binomial)
+summary(glm.caso2_binomial)
+
+# Here, we can see the deviance column that gives differences between models as variables are added to the model in turn. Since the ab variable is significant, it may be not removed from the model and we cannot use the table to justify model reductions. If, however, the terms are rearranged so that age comes last, we get a deviance-based test for removal of that variable:
+
+```
+
+```{r code GLM Poisson}
+
+glm.caso2_poisson=glm(Life.expectancy~particulate.matter.emissions+carbon.dioxide.emissions+methane.emissions, family= "poisson", data = train_caso2_poisson)
+summary(glm.caso2_poisson)
+
+# Here, we can see the deviance column that gives differences between models as variables are added to the model in turn. Since the ab variable is significant, it may be not removed from the model and we cannot use the table to justify model reductions. If, however, the terms are rearranged so that age comes last, we get a deviance-based test for removal of that variable:
+
+```
+
+```{r code GLM Gaussian}
+
+glm.caso2_gaussian=glm(Life.expectancy~particulate.matter.emissions+carbon.dioxide.emissions+methane.emissions, family= "gaussian", data = train_caso2_gaussian)
+summary(glm.caso2_gaussian)
+
+# Here, we can see the deviance column that gives differences between models as variables are added to the model in turn. Since the ab variable is significant, it may be not removed from the model and we cannot use the table to justify model reductions. If, however, the terms are rearranged so that age comes last, we get a deviance-based test for removal of that variable:
+
+```
+
+
+```{r code GLM Inverse Gaussian}
+
+glm.caso2_inverse.gaussian=glm(Life.expectancy~particulate.matter.emissions+carbon.dioxide.emissions+methane.emissions, family= "inverse.gaussian", data = train_caso2_gaussian)
+summary(glm.caso2_inverse.gaussian)
+
+# Here, we can see the deviance column that gives differences between models as variables are added to the model in turn. Since the ab variable is significant, it may be not removed from the model and we cannot use the table to justify model reductions. If, however, the terms are rearranged so that age comes last, we get a deviance-based test for removal of that variable:
+
+```
+
+```{r code GLM Gamma}
+
+glm.caso2_gamma=glm(Life.expectancy~particulate.matter.emissions+carbon.dioxide.emissions+methane.emissions, family= "Gamma", data = train_caso2_gaussian)
+summary(glm.caso2_inverse.gamma)
+
+# Here, we can see the deviance column that gives differences between models as variables are added to the model in turn. Since the ab variable is significant, it may be not removed from the model and we cannot use the table to justify model reductions. If, however, the terms are rearranged so that age comes last, we get a deviance-based test for removal of that variable:
+
+```
+
+
+
+
+
+
+```{r code Anova Binomial}
+
+anova(glm.caso2_binomial, test="Chisq")
+aov(glm.caso2_binomial, test="Chisq")
+
+# Here, we can see the deviance column that gives differences between models as variables are added to the model in turn. Since the ab variable is significant, it may be not removed from the model and we cannot use the table to justify model reductions. If, however, the terms are rearranged so that age comes last, we get a deviance-based test for removal of that variable:
+
+```
+
+
+```{r code Anova Poisson}
+
+anova(glm.caso2_poisson, test="Chisq")
+
+# Here, we can see the deviance column that gives differences between models as variables are added to the model in turn. Since the ab variable is significant, it may be not removed from the model and we cannot use the table to justify model reductions. If, however, the terms are rearranged so that age comes last, we get a deviance-based test for removal of that variable:
+
+```
+
+
+
+```{r code Anova Gaussian}
+
+anova(glm.caso2_gaussian, test="Chisq")
+
+# Here, we can see the deviance column that gives differences between models as variables are added to the model in turn. Since the ab variable is significant, it may be not removed from the model and we cannot use the table to justify model reductions. If, however, the terms are rearranged so that age comes last, we get a deviance-based test for removal of that variable:
+
+```
+
+```{r code Anova Inverse Gaussian}
+
+anova(glm.caso2_inverse.gaussian, test="Chisq")
+
+# Here, we can see the deviance column that gives differences between models as variables are added to the model in turn. Since the ab variable is significant, it may be not removed from the model and we cannot use the table to justify model reductions. If, however, the terms are rearranged so that age comes last, we get a deviance-based test for removal of that variable:
+
+```
+
+```{r code Anova Gamma}
+
+anova(glm.caso2_gamma, test="Chisq")
+
+# Here, we can see the deviance column that gives differences between models as variables are added to the model in turn. Since the ab variable is significant, it may be not removed from the model and we cannot use the table to justify model reductions. If, however, the terms are rearranged so that age comes last, we get a deviance-based test for removal of that variable:
+
+```
+
+
+
+```{r code I.C. Binomial} 
+#Likelihood profiling
+
+confint.default(glm.caso2_binomial)
+
+plot(profile(glm.caso2_binomial))
+
+```
+
+
+```{r code I.C. Poisson} 
+#Likelihood profiling
+
+confint.default(glm.caso2_poisson)
+
+plot(profile(glm.caso2_poisson))
+
+```
+
+
+```{r code I.C. Gaussian} 
+#Likelihood profiling
+
+confint.default(glm.caso2_gaussian)
+
+plot(profile(glm.caso2_gaussian))
+
+```
+
+```{r code I.C. Inverse Gaussian} 
+#Likelihood profiling
+
+confint.default(glm.caso2_inverse.gaussian)
+
+plot(profile(glm.caso2_inverse.gaussian))
+
+```
+
+```{r code I.C. Gamma} 
+#Likelihood profiling
+
+confint.default(glm.caso2_gamma)
+
+plot(profile(glm.caso2_gamma))
+
+```
+
+```{r code Prediction Binomial} 
+#Prediction
+prediction_caso2_binomial=predict(object=glm.caso2_binomial, newdata=test_caso2_binomial, type = "response")
+prediction1_caso2_binomial=round(predict(object=glm.caso2_binomial, newdata=test_caso2_binomial, type = "response"),0)
+prediction1_caso2_binomial
+
+method_binomial=function(pme,cde,me){
+  result=1.08312513+(-0.50064848*pme)+(0.03664129*cde)+(-0.11595652*me)
+  return(result)
+}
+method_binomial(1.787,0.454,0.255)
+```
+
+```{r code Prediction Poisson} 
+#Prediction
+prediction_caso2_poisson=predict(object=glm.caso2_poisson, newdata=test_caso2_poisson, type = "response")
+prediction1_caso2_poisson=round(predict(object=glm.caso2_poisson, newdata=test_caso2_poisson, type = "response"),0)
+prediction1_caso2_poisson
+```
+
+```{r code Prediction Gaussian} 
+#Prediction
+prediction_caso2_gaussian=predict(object=glm.caso2_gaussian, newdata=test_caso2_gaussian, type = "response")
+
+prediction_caso2_gaussian
+```
+
+```{r code Prediction Inverse Gaussian} 
+#Prediction
+prediction_caso2_inverse.gaussian=predict(object=glm.caso2_inverse.gaussian, newdata=test_caso2_gaussian, type = "response")
+
+prediction_caso2_inverse.gaussian
+```
+
+```{r code Prediction Gamma} 
+#Prediction
+prediction_caso2_gamma=predict(object=glm.caso2_gamma, newdata=test_caso2_gaussian, type = "response")
+
+prediction_caso2_gamma
+```
+
+
+
+```{r code Muestra graficas Binomial} 
+#Prediction
+test_caso2_binomial$Prediction <- prediction_caso2_binomial
+test_caso2_binomial=test_caso2_binomial %>% 
+  mutate(prediction_round = round(Prediction, 0))
+
+ggplot(data=train_caso2_binomial, aes(factor(Life.expectancy), fitted(glm.caso2)))+geom_boxplot()+ggtitle("Boxplot comparing train dataset predicted values to actual values") + xlab("Train dataset predicted values") + ylab("Actual values")
+ggplot(data=test_caso2_binomial,aes(factor(Life.expectancy),  Prediction))+geom_boxplot()+ggtitle("Boxplot comparing test dataset predicted values to actual values") + xlab("Test dataset predicted values") + ylab("Actual values")
+ggplot(data = test_caso2_binomial,aes(particulate.matter.emissions ,prediction_round)) + geom_point() +geom_smooth() + ggtitle("Comparison between predicted life expectancy and particulate matter emissions") + xlab("Particulate Matter Emissions") + ylab("Predicted Life Expectancy")
+ggplot(data = test_caso2_binomial,aes(carbon.dioxide.emissions ,prediction_round)) + geom_point() +geom_smooth() + ggtitle("Comparison between predicted life expectancy and carbon dioxide emissions") + xlab("Carbon Dioxide Emissions") + ylab("Predicted Life Expectancy")
+ggplot(data = test_caso2_binomial,aes(methane.emissions ,prediction_round)) + geom_point() +geom_smooth() + ggtitle("Comparison between predicted life expectancy and methane emissions") + xlab("Methane Emissions") + ylab("Predicted Life Expectancy")
+```
+
+```{r code Muestra graficas Poisson} 
+#Prediction
+test_caso2_poisson$Prediction <- prediction_caso2_poisson
+test_caso2_poisson=test_caso2_poisson %>% 
+  mutate(prediction_round = round(Prediction, 0))
+
+ggplot(data=train_caso2_poisson, aes(factor(Life.expectancy), fitted(glm.caso2)))+geom_boxplot()+ggtitle("Boxplot comparing train dataset predicted values to actual values") + xlab("Train dataset predicted values") + ylab("Actual values")
+ggplot(data=test_caso2_poisson,aes(factor(Life.expectancy),  Prediction))+geom_boxplot()+ggtitle("Boxplot comparing test dataset predicted values to actual values") + xlab("Test dataset predicted values") + ylab("Actual values")
+ggplot(data = test_caso2_poisson,aes(particulate.matter.emissions ,prediction_round)) + geom_point() +geom_smooth() + ggtitle("Comparison between predicted life expectancy and particulate matter emissions") + xlab("Particulate Matter Emissions") + ylab("Predicted Life Expectancy")
+ggplot(data = test_caso2_poisson,aes(carbon.dioxide.emissions ,prediction_round)) + geom_point() +geom_smooth() + ggtitle("Comparison between predicted life expectancy and carbon dioxide emissions") + xlab("Carbon Dioxide Emissions") + ylab("Predicted Life Expectancy")
+ggplot(data = test_caso2_poisson,aes(methane.emissions ,prediction_round)) + geom_point() +geom_smooth() + ggtitle("Comparison between predicted life expectancy and methane emissions") + xlab("Methane Emissions") + ylab("Predicted Life Expectancy")
+```
+
+
+```{r code Muestra graficas Gaussian} 
+#Prediction
+test_caso2_gaussian$Prediction <- prediction_caso2_gaussian
+test_caso2_gaussian=test_caso2_gaussian %>% 
+  mutate(prediction_round = round(Prediction, 0))
+
+ggplot(data = test_caso2_gaussian,aes(particulate.matter.emissions ,Prediction)) + geom_point() +geom_smooth() + ggtitle("Comparison between predicted life expectancy and particulate matter emissions") + xlab("Particulate Matter Emissions") + ylab("Predicted Life Expectancy")
+ggplot(data = test_caso2_gaussian,aes(carbon.dioxide.emissions ,Prediction)) + geom_point() +geom_smooth() + ggtitle("Comparison between predicted life expectancy and carbon dioxide emissions") + xlab("Carbon Dioxide Emissions") + ylab("Predicted Life Expectancy")
+ggplot(data = test_caso2_gaussian,aes(methane.emissions ,Prediction)) + geom_point() +geom_smooth() + ggtitle("Comparison between predicted life expectancy and methane emissions") + xlab("Methane Emissions") + ylab("Predicted Life Expectancy")
+```
+
+```{r code Muestra graficas Inverse Gaussian} 
+#Prediction
+test_caso2_gaussian$Prediction <- prediction_caso2_inverse.gaussian
+test_caso2_gaussian=test_caso2_gaussian %>% 
+  mutate(prediction_round = round(Prediction, 0))
+
+ggplot(data = test_caso2_gaussian,aes(particulate.matter.emissions ,Prediction)) + geom_point() +geom_smooth() + ggtitle("Comparison between predicted life expectancy and particulate matter emissions") + xlab("Particulate Matter Emissions") + ylab("Predicted Life Expectancy")
+ggplot(data = test_caso2_gaussian,aes(carbon.dioxide.emissions ,Prediction)) + geom_point() +geom_smooth() + ggtitle("Comparison between predicted life expectancy and carbon dioxide emissions") + xlab("Carbon Dioxide Emissions") + ylab("Predicted Life Expectancy")
+ggplot(data = test_caso2_gaussian,aes(methane.emissions ,Prediction)) + geom_point() +geom_smooth() + ggtitle("Comparison between predicted life expectancy and methane emissions") + xlab("Methane Emissions") + ylab("Predicted Life Expectancy")
+```
+
+```{r code Muestra graficas Gamma} 
+#Prediction
+test_caso2_gaussian$Prediction <- prediction_caso2_gamma
+test_caso2_gaussian=test_caso2_gaussian %>% 
+  mutate(prediction_round = round(Prediction, 0))
+
+ggplot(data = test_caso2_gaussian,aes(particulate.matter.emissions ,Prediction)) + geom_point() +geom_smooth() + ggtitle("Comparison between predicted life expectancy and particulate matter emissions") + xlab("Particulate Matter Emissions") + ylab("Predicted Life Expectancy")
+ggplot(data = test_caso2_gaussian,aes(carbon.dioxide.emissions ,Prediction)) + geom_point() +geom_smooth() + ggtitle("Comparison between predicted life expectancy and carbon dioxide emissions") + xlab("Carbon Dioxide Emissions") + ylab("Predicted Life Expectancy")
+ggplot(data = test_caso2_gaussian,aes(methane.emissions ,Prediction)) + geom_point() +geom_smooth() + ggtitle("Comparison between predicted life expectancy and methane emissions") + xlab("Methane Emissions") + ylab("Predicted Life Expectancy")
+```
+
+```{r code Matriz Confusion Binomial}
+ConfMat_binomial <- confusionMatrix(data=factor(prediction1_caso2_binomial), reference = factor(test_caso2_binomial$Life.expectancy))
+ConfMat_binomial
+```
+
+```{r code Matriz Confusion Poisson}
+ConfMat_poisson <- confusionMatrix(data=factor(prediction1_caso2_poisson), reference = factor(test_caso2_poisson$Life.expectancy))
+ConfMat_poisson
+```
+
+
