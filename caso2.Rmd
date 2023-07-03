@@ -23,6 +23,7 @@ library(caret)
 ```{r code0}
 
 caso2=read.csv("case2.csv")
+head(caso2)
 caso2_1=caso2 %>% filter(carbon.dioxide.emissions <=100)
 ggplot(caso2, aes(Life.expectancy, particulate.matter.emissions))+geom_jitter()
 ggplot(caso2_1, aes(Life.expectancy, carbon.dioxide.emissions))+geom_jitter()
@@ -103,6 +104,9 @@ train_ind <- sample(seq_len(nrow(caso2_binomial)), size = smp_size)
 
 train_caso2_binomial <- caso2_binomial[train_ind, ]
 test_caso2_binomial <- caso2_binomial[-train_ind, ]
+
+ggplot(train_caso2_binomial, aes(Life.expectancy, particulate.matter.emissions))+ geom_point() + geom_smooth() + ggtitle("Comparison between Life expectancy and particulate matter emissions") + xlab("Particulate Matter Emissions") + ylab("Life Expectancy")
+ggplot(train_caso2_binomial, aes(Life.expectancy, particulate.matter.emissions))+ geom_boxplot() + ggtitle("Comparison between Life expectancy and particulate matter emissions") + xlab("Particulate Matter Emissions") + ylab("Life Expectancy")
 
 # The first part are the deviance residuals, this is the contribution of the cells of the table to the deviance of the model. It shows the median deviance residual, the minimum and the maximum.
 
@@ -279,6 +283,7 @@ aov(glm.caso2_binomial, test="Chisq")
 ```{r code Anova Poisson}
 
 anova(glm.caso2_poisson, test="Chisq")
+aov(glm.caso2_poisson, test="Chisq")
 
 # Here, we can see the deviance column that gives differences between models as variables are added to the model in turn. Since the ab variable is significant, it may be not removed from the model and we cannot use the table to justify model reductions. If, however, the terms are rearranged so that age comes last, we get a deviance-based test for removal of that variable:
 
@@ -289,6 +294,7 @@ anova(glm.caso2_poisson, test="Chisq")
 ```{r code Anova Gaussian}
 
 anova(glm.caso2_gaussian, test="Chisq")
+aov(glm.caso2_gaussian, test="Chisq")
 
 # Here, we can see the deviance column that gives differences between models as variables are added to the model in turn. Since the ab variable is significant, it may be not removed from the model and we cannot use the table to justify model reductions. If, however, the terms are rearranged so that age comes last, we get a deviance-based test for removal of that variable:
 
@@ -297,6 +303,7 @@ anova(glm.caso2_gaussian, test="Chisq")
 ```{r code Anova Inverse Gaussian}
 
 anova(glm.caso2_inverse.gaussian, test="Chisq")
+aov(glm.caso2_inverse.gaussian, test="Chisq")
 
 # Here, we can see the deviance column that gives differences between models as variables are added to the model in turn. Since the ab variable is significant, it may be not removed from the model and we cannot use the table to justify model reductions. If, however, the terms are rearranged so that age comes last, we get a deviance-based test for removal of that variable:
 
@@ -305,6 +312,7 @@ anova(glm.caso2_inverse.gaussian, test="Chisq")
 ```{r code Anova Gamma}
 
 anova(glm.caso2_gamma, test="Chisq")
+aov(glm.caso2_gamma, test="Chisq")
 
 # Here, we can see the deviance column that gives differences between models as variables are added to the model in turn. Since the ab variable is significant, it may be not removed from the model and we cannot use the table to justify model reductions. If, however, the terms are rearranged so that age comes last, we get a deviance-based test for removal of that variable:
 
@@ -422,7 +430,7 @@ test_caso2_poisson=test_caso2_poisson %>%
   mutate(prediction_round = round(Prediction, 0))
 
 ggplot(data=train_caso2_poisson, aes(factor(Life.expectancy), fitted(glm.caso2)))+geom_boxplot()+ggtitle("Boxplot comparing train dataset predicted values to actual values") + xlab("Train dataset predicted values") + ylab("Actual values")
-ggplot(data=test_caso2_poisson,aes(factor(Life.expectancy),  Prediction))+geom_boxplot()+ggtitle("Boxplot comparing test dataset predicted values to actual values") + xlab("Test dataset predicted values") + ylab("Actual values")
+ggplot(data=test_caso2_poisson,aes(factor(Life.expectancy),  Prediction,color=factor(Life.expectancy)))+geom_boxplot()+labs(title = "Boxplot comparing test dataset predicted values to actual values", x = "Particulate Matter Emissions", y = "Predicted Life Expectancy", color = "Life Expectancy Group") + scale_color_manual(labels=c("Smaller than 65","Between 65 and 72.5", "Between 72.5 and 80", "Bigger than 80"), values=c("orange","red","blue","dark green"))
 ggplot(data = test_caso2_poisson,aes(particulate.matter.emissions ,prediction_round)) + geom_point() +geom_smooth() + ggtitle("Comparison between predicted life expectancy and particulate matter emissions") + xlab("Particulate Matter Emissions") + ylab("Predicted Life Expectancy")
 ggplot(data = test_caso2_poisson,aes(carbon.dioxide.emissions ,prediction_round)) + geom_point() +geom_smooth() + ggtitle("Comparison between predicted life expectancy and carbon dioxide emissions") + xlab("Carbon Dioxide Emissions") + ylab("Predicted Life Expectancy")
 ggplot(data = test_caso2_poisson,aes(methane.emissions ,prediction_round)) + geom_point() +geom_smooth() + ggtitle("Comparison between predicted life expectancy and methane emissions") + xlab("Methane Emissions") + ylab("Predicted Life Expectancy")
